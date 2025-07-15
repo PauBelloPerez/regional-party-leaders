@@ -14,38 +14,39 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
 
   <style>
-    :root { --primary: #1D6F42; --map-btn: #4a90e2; --map-btn-hover: #357ab8; --bg: #f7f9fc; --card-bg: #fff; --text: #333; --radius:8px; --font:'Inter',sans-serif; }
-    * { box-sizing:border-box; }
-    body,html { margin:0;padding:0;width:100%;height:100%;font-family:var(--font);background:var(--bg);color:var(--text); }
-    #container { width:90%;max-width:1200px;margin:20px auto; }
-    h3 { margin:0 0 10px;font-weight:600; }
-
+    :root { --primary:#1D6F42;--map-btn:#4a90e2;--map-btn-hover:#357ab8;--bg:#f7f9fc;--card-bg:#fff;--text:#333;--radius:8px;--font:'Inter',sans-serif; }
+    *{box-sizing:border-box;}
+    body,html{margin:0;padding:0;width:100%;height:100%;font-family:var(--font);background:var(--bg);color:var(--text);}
+    #container{width:90%;max-width:1200px;margin:20px auto;}
+    h3{margin:0 0 10px;font-weight:600;}
     /* Navegación de mapas */
-    #mapNav { text-align:center;margin-bottom:10px; }
-    .map-btn { background:var(--map-btn);color:#fff;border:none;padding:6px 12px;margin:0 5px;border-radius:var(--radius);cursor:pointer;font-weight:600;transition:background .2s; }
-    .map-btn:hover { background:var(--map-btn-hover); }
-
+    #mapNav{text-align:center;margin-bottom:10px;}
+    .map-btn{background:var(--map-btn);color:#fff;border:none;padding:6px 12px;margin:0 5px;border-radius:var(--radius);cursor:pointer;font-weight:600;transition:background .2s;}
+    .map-btn:hover{background:var(--map-btn-hover);}
     /* Mapa y lista de países */
-    #mapAndSidebar { display:grid;grid-template-columns:1fr 250px;gap:20px; }
-    #map { width:100%;height:60vh;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,0.1); }
-    .leaflet-container:focus, #map:focus { outline:none!important; }
-    #countryList { background:var(--card-bg);border-radius:var(--radius);padding:15px;height:60vh;overflow-y:auto;box-shadow:0 2px 8px rgba(0,0,0,0.05); }
-    .country-item { padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;cursor:pointer;transition:background .2s; }
-    .country-item:hover, .country-item.active { background:#4a90e2;color:#fff; }
-
-    /* Descarga */
-    #downloadZone { margin-top:30px;background:var(--card-bg);padding:20px;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,0.05); }
-    #downloadZone h3 { margin-bottom:15px; display:flex; justify-content: space-between; align-items: center; }
-    #downloadZone h3 span { font-weight:400; color:#000; margin-left:8px; }
-    #downloadZone label { font-weight:600;margin-bottom:8px;display:block; }
-    #partySearch { width:100%;padding:8px 12px;margin-bottom:12px;border:1px solid #ccc;border-radius:var(--radius); }
-    #partyList { display:flex;flex-wrap:wrap;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:12px; }
-    .party-chip { padding:6px 12px;border-radius:var(--radius);background:#e4e7ed;cursor:pointer;transition:background .2s,color .2s; }
-    .party-chip.selected { background:#4a90e2;color:#fff; }
-
-    /* Botón de descarga estilo Uiverse, icono alineado al borde */
-    .button {
-      position: relative;
+    #mapAndSidebar{display:grid;grid-template-columns:1fr 250px;gap:20px;}
+    #map{width:100%;height:60vh;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+    #countryList{background:var(--card-bg);border-radius:var(--radius);padding:15px;height:60vh;overflow-y:auto;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+    .country-item{padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;cursor:pointer;transition:background .2s;}
+    .country-item:hover,.country-item.active{background:#4a90e2;color:#fff;}
+    /* Descarga y Preview */
+    #downloadZone{margin-top:30px;background:var(--card-bg);padding:20px;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+    #downloadZone h3{margin-bottom:15px;display:flex;justify-content:space-between;align-items:center;}
+    #downloadZone h3 span{font-weight:400;color:#000;margin-left:8px;}
+    #downloadZone label{font-weight:600;margin-bottom:8px;display:block;}
+    #partyList{display:flex;flex-wrap:wrap;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:12px;}
+    .party-chip{padding:6px 12px;border-radius:var(--radius);background:#e4e7ed;cursor:pointer;transition:background .2s,color .2s;}
+    .party-chip.selected{background:#4a90e2;color:#fff;}
+    #previewZone{display:none;margin-top:20px;}
+    table{width:100%;border-collapse:collapse;margin-bottom:15px;}
+    th,td{border:1px solid #ddd;padding:8px;text-align:left;}
+    th{cursor:pointer;background:#f0f0f0;}
+    tr:nth-child(even){background:#f9f9f9;}
+    /* Botón Uiverse Download */
+    /* From Uiverse.io by andrew-demchenk0 */ 
+.button {
+      position: absolute;
+      left: 330px;
       width: 180px;
       height: 40px;
       cursor: pointer;
@@ -97,6 +98,70 @@
     .button:active {
       border: 1px solid #146c54;
     }
+    /* Nuevo estilo Preview */
+    #btnPreview.custom {
+      --primary-color: #4a90e2;
+      --secondary-color: #fff;
+      --hover-color: #111;
+      --arrow-width: 10px;
+      --arrow-stroke: 2px;
+      box-sizing: border-box;
+      border: 0;
+      border-radius: 20px;
+      color: var(--secondary-color);
+      padding: 1em 1.8em;
+      background: var(--primary-color);
+      display: flex;
+      transition: 0.2s background;
+      align-items: center;
+      gap: 0.6em;
+    }
+    #btnPreview.custom .arrow-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #btnPreview.custom .arrow {
+      margin-top: 1px;
+      width: var(--arrow-width);
+      background: var(--primary-color);
+      height: var(--arrow-stroke);
+      position: relative;
+      transition: 0.2s;
+    }
+    #btnPreview.custom .arrow::before {
+      content: "";
+      box-sizing: border-box;
+      position: absolute;
+      border: solid var(--secondary-color);
+      border-width: 0 var(--arrow-stroke) var(--arrow-stroke) 0;
+      display: inline-block;
+      top: -3px;
+      right: 3px;
+      transition: 0.2s;
+      padding: 3px;
+      transform: rotate(-45deg);
+    }
+    #btnPreview.custom:hover { background-color: var(--hover-color); }
+    #btnPreview.custom:hover .arrow { background: var(--secondary-color); }
+    #btnPreview.custom:hover .arrow::before { right: 0; }
+    #paginationControls button {
+        padding: 4px 8px;
+        border: 1px solid #ddd;
+        background: #f7f7f7;
+        cursor: pointer;
+        border-radius: 4px;
+    }
+    #paginationControls button.active {
+        background: #4a90e2;
+        color: #fff;
+        border-color: #4a90e2;
+    }
+    #paginationControls button:disabled {
+        opacity: 0.5;
+        cursor: default;
+    }
+
   </style>
 </head>
 <body>
@@ -108,124 +173,341 @@
     </div>
     <div id="mapAndSidebar">
       <div id="map"></div>
-      <div id="countryList"><h3>Países</h3></div>
+      <div id="countryList"><h3>Countries</h3></div>
     </div>
     <div id="downloadZone">
-      <h3>Descarga de Partidos <span id="selectedCountry"></span></h3>
-      <label for="partySearch">Buscar partido</label>
-      <input type="text" id="partySearch" placeholder="Filtrar partidos..." disabled />
+      <h3>Download <span id="selectedCountry"></span></h3>
+      <label>Select parties:</label>
       <div id="partyList"></div>
-      <button id="btnDownload" class="button" disabled>
-        <span class="button__text">Download data</span>
-        <span class="button__icon">
-          <svg class="svg" viewBox="0 0 24 24"><path d="M12 16l4-5h-3V4h-2v7H8l4 5zM4 18h16v2H4z"/></svg>
-        </span>
-      </button>
+      <div style="display:flex; gap:10px; margin-top:10px;">
+        <button id="btnPreview" class="custom" disabled>Preview Data</button>
+        <button id="btnDownload" class="button" disabled>
+          <span class="button__text">Download data</span>
+          <span class="button__icon"><svg class="svg" viewBox="0 0 24 24"><path d="M12 16l4-5h-3V4h-2v7H8l4 5zM4 18h16v2H4z"/></svg></span>
+        </button>
+      </div>
+      <div id="previewZone">
+  <!-- Controles de paginación -->
+  <div id="paginationControls" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;"></div>
+
+  <table id="previewTable">
+  <colgroup>
+    <col style="width: 15%;">
+    <col style="width: 15%;">
+    <col style="width: 30%;">
+    <col style="width: 20%;">
+    <col style="width: 10%;">
+    <col style="width: 10%;">
+  </colgroup>
+  <thead>
+    <tr>
+      <th>Country</th>
+      <th>Region</th>
+      <th>Party</th>
+      <th>Party leader</th>
+      <th>Since</th>
+      <th>Until</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+</div>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const allCountries = ['Austria','France','Germany','Italy','Portugal','Spain','Switzerland','United Kingdom','Canada','Australia'];
-      const countryListEl = document.getElementById('countryList');
-      allCountries.forEach(name => {
-        const div = document.createElement('div');
-        div.className = 'country-item';
-        div.textContent = name;
-        div.onclick = () => selectCountry(name);
-        countryListEl.appendChild(div);
-      });
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  // 1) Países y mapas
+  const allCountries = [
+    'Austria','France','Germany','Italy','Portugal',
+    'Spain','Switzerland','United Kingdom','Canada','Australia'
+  ];
+  const countryListEl = document.getElementById('countryList');
+  allCountries.forEach(name=>{
+    const d = document.createElement('div');
+    d.className = 'country-item';
+    d.textContent = name;
+    d.onclick = ()=> selectCountry(name);
+    countryListEl.appendChild(d);
+  });
+  const maps = [
+    {
+      name:'Europa', file:'europe.geojson', prop:'NAME',
+      bounds:[[20,-40],[72,50]], zoom:4,
+      style:{color:'#000',weight:1,fillColor:'#4a90e2',fillOpacity:0.5},
+      filter:f=>['Austria','France','Germany','Italy','Portugal','Spain','Switzerland','United Kingdom']
+             .includes(f.properties.NAME)
+    },
+    {
+      name:'Canada', file:'ca.json', prop:'name',
+      bounds:[[41,-141],[83,-52]], zoom:2,
+      style:{color:'#000',weight:1,fillColor:'#4a90e2',fillOpacity:0.5}
+    },
+    {
+      name:'Australia', file:'au.json', prop:'name',
+      bounds:[[-44,112],[-10,154]], zoom:3,
+      style:{color:'#000',weight:1,fillColor:'#4a90e2',fillOpacity:0.5}
+    }
+  ];
 
-      const maps = [
-        { name:'Europa', file:'europe.geojson', prop:'NAME', bounds:[[20,-40],[72,50]], zoom:4,
-          style:{color:'#000',weight:1,fillColor:'#4a90e2',fillOpacity:0.5},
-          filter: f=>['Austria','France','Germany','Italy','Portugal','Spain','Switzerland','United Kingdom'].includes(f.properties.NAME)
-        },
-        { name:'Canada', file:'ca.json', prop:'name', bounds:[[41,-141],[83,-52]], zoom:2,
-          style:{color:'#000',weight:1,fillColor:'#4a90e2',fillOpacity:0.5}
-        },
-        { name:'Australia', file:'au.json', prop:'name', bounds:[[-44,112],[-10,154]], zoom:3,
-          style:{color:'#000',weight:1,fillColor:'#4a90e2',fillOpacity:0.5}
-        }
-      ];
-      let idx=0, countriesLayer, selectedLayer=null;
-      let partiesData=[], currentCountry='';
-      const prevBtn=document.getElementById('prevMap');
-      const nextBtn=document.getElementById('nextMap');
-      const mapTitle=document.getElementById('mapTitle');
-      const selectedCountrySpan=document.getElementById('selectedCountry');
-      const partyListEl=document.getElementById('partyList');
-      const partySearch=document.getElementById('partySearch');
-      const btnDownload=document.getElementById('btnDownload');
+  // 2) Datos: cargamos y homogeneizamos ambos CSV
+  let partiesDataMain = [], partiesDataAus = [];
+  Papa.parse('DataPartiesPrueba.csv',{ download:true, header:true, skipEmptyLines:true,
+    complete: res=>{
+      partiesDataMain = res.data.map(r=>({
+        Country:      r.COUNTRY,
+        Region:       '',                    // no viene en este CSV
+        Party:        r.PTYNAME,
+        'Party leader': r.CR20PPGLDR,
+        'Year became leader': '',
+        'Year ended as leader': ''
+      }));
+    }
+  });
+  Papa.parse('DataAustralia.csv',{ download:true, header:true, skipEmptyLines:true,
+    complete: res=>{
+      partiesDataAus = res.data.map(r=>({
+        Country:      r.Country,
+        Region:       r.Region,
+        Party:        r.Party,
+        'Party leader': r['Party leader'],
+        'Year became leader': r['Year became leader'],
+        'Year ended as leader': r['Year ended as leader']
+      }));
+    }
+  });
 
-      const map=L.map('map',{attributionControl:false,zoomControl:false,boxZoom:false,doubleClickZoom:false}).setView([50,10],4);
-      if(map.boxZoom)map.boxZoom.disable();if(map.doubleClickZoom)map.doubleClickZoom.disable();
+  // 3) Variables globales (mapa, paginación, orden)
+  let idx = 0, countriesLayer, selectedLayer=null, currentCountry='';
+  let partiesData = [], currentPage=1, rowsPerPage=25;
+  let sortColumn=null, sortAsc=true;
+  const btnPreview       = document.getElementById('btnPreview');
+  const btnDownload      = document.getElementById('btnDownload');
+  const partyListElInner = document.getElementById('partyList');
+  const selectedCountrySpan = document.getElementById('selectedCountry');
+  const mapTitle         = document.getElementById('mapTitle');
 
-      Papa.parse('DataPartiesPRUEBA.csv',{download:true,header:true,skipEmptyLines:true,complete:r=>partiesData=r.data});
+  // Inicializa Leaflet
+  const map = L.map('map',{attributionControl:false,zoomControl:false})
+               .setView([50,10],4);
+  map.boxZoom.disable(); map.doubleClickZoom.disable();
+  loadMap();
 
-      function loadMap(callback){
-        const cfg=maps[idx];mapTitle.textContent=cfg.name;map.setMaxBounds(cfg.bounds);
-        if(countriesLayer)map.removeLayer(countriesLayer);
-        const center=[(cfg.bounds[0][0]+cfg.bounds[1][0])/2,(cfg.bounds[0][1]+cfg.bounds[1][1])/2];
-        map.setView(center,cfg.zoom);
-        fetch(cfg.file).then(r=>r.json()).then(data=>{
-          let features=data.features.filter(f=>f.properties&&f.properties[cfg.prop]!==undefined);
-          if(cfg.filter)features=features.filter(cfg.filter);
-          countriesLayer=L.geoJSON({type:'FeatureCollection',features},{style:cfg.style,onEachFeature:(f,l)=>l.on('click',()=>selectCountry(f.properties[cfg.prop]))}).addTo(map);
-          enhance();if(callback)callback();
-        });
-      }
-
-      function enhance(){
-        countriesLayer.eachLayer(l=>{
-          l.on('mouseover',()=>l.setStyle({weight:3}));
-          l.on('mouseout',()=>{if(l!==selectedLayer)l.setStyle({weight:1});});
-        });
-      }
-
-      prevBtn.onclick=()=>{idx=(idx-1+maps.length)%maps.length;loadMap();};
-      nextBtn.onclick=()=>{idx=(idx+1)%maps.length;loadMap();};
-
-      function selectCountry(name){
-        currentCountry=name;
-        selectedCountrySpan.textContent=name;
-        document.querySelectorAll('.country-item').forEach(el=>el.classList.toggle('active',el.textContent===name));
-        const targetIdx=maps.findIndex(cfg=>cfg.name===name||(cfg.filter&&cfg.filter({properties:{[cfg.prop]:name}})));
-        idx=targetIdx<0?0:targetIdx;
-        loadMap(()=>{
-          countriesLayer.eachLayer(l=>{
-            if(l.feature.properties[maps[idx].prop]===name){
-              if(selectedLayer)countriesLayer.resetStyle(selectedLayer);
-              selectedLayer=l; l.setStyle({weight:4,color:'#000'});
-                if (idx > 0) {
-                const b = l.getBounds();
-                map.setView(b.getCenter(), maps[idx].zoom);
-                }
-                buildChips();
-
-            }
-          });
-        });
-      }
-
-      function buildChips(){
-        const ps=Array.from(new Set(partiesData.filter(r=>r.COUNTRY===currentCountry).map(r=>r.PTYNAME))).sort();
-        partyListEl.innerHTML='';partySearch.disabled=false;btnDownload.disabled=false;
-        ps.forEach(p=>{const chip=document.createElement('div');chip.textContent=p;chip.className='party-chip selected';chip.onclick=()=>{chip.classList.toggle('selected');btnDownload.disabled=!partyListEl.querySelectorAll('.selected').length;};partyListEl.appendChild(chip);});
-        partySearch.value='';partySearch.oninput=()=>partyListEl.childNodes.forEach(ch=>ch.style.display=ch.textContent.toLowerCase().includes(partySearch.value.toLowerCase())?'inline-block':'none');
-      }
-
-      btnDownload.onclick=()=>{
-        const sel=Array.from(partyListEl.querySelectorAll('.selected')).map(c=>c.textContent);
-        const filtered=partiesData.filter(r=>r.COUNTRY===currentCountry&&sel.includes(r.PTYNAME));
-        if(!filtered.length){alert('Sin datos');return;}
-        const data=filtered.map(r=>({Partido:r.PTYNAME,Líder:r.CR20PPGLDR||''}));
-        const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),'Partidos');XLSX.writeFile(wb,`Partidos_${currentCountry}.xlsx`);
-      };
-
-      loadMap();
+  // --- Funciones de mapa ---
+  function loadMap(cb){
+    const cfg = maps[idx];
+    mapTitle.textContent = cfg.name;
+    map.setMaxBounds(cfg.bounds);
+    if(countriesLayer) map.removeLayer(countriesLayer);
+    map.setView([
+      (cfg.bounds[0][0]+cfg.bounds[1][0])/2,
+      (cfg.bounds[0][1]+cfg.bounds[1][1])/2
+    ], cfg.zoom);
+    fetch(cfg.file).then(r=>r.json()).then(data=>{
+      let feats = data.features
+                     .filter(f=>f.properties&&f.properties[cfg.prop]!==undefined);
+      if(cfg.filter) feats = feats.filter(cfg.filter);
+      countriesLayer = L.geoJSON(
+        {type:'FeatureCollection',features:feats},
+        {style:cfg.style, onEachFeature:(f,l)=>l.on('click',()=>selectCountry(f.properties[cfg.prop]))}
+      ).addTo(map);
+      enhance();
+      if(cb) cb();
     });
-  </script>
+  }
+  function enhance(){
+    countriesLayer.eachLayer(l=>{
+      l.on('mouseover',()=>l.setStyle({weight:3}));
+      l.on('mouseout',()=>{ if(l!==selectedLayer) l.setStyle({weight:1}); });
+    });
+  }
+
+  // Prev / Next mapa
+  document.getElementById('prevMap').onclick = ()=>{
+    idx = (idx-1+maps.length)%maps.length;
+    loadMap();
+  };
+  document.getElementById('nextMap').onclick = ()=>{
+    idx = (idx+1)%maps.length;
+    loadMap();
+  };
+
+  // --- Selección de país ---
+  function selectCountry(name){
+    currentCountry = name;
+    selectedCountrySpan.textContent = name;
+    document.querySelectorAll('.country-item')
+      .forEach(el=>el.classList.toggle('active',el.textContent===name));
+
+    // ¿qué CSV uso?
+    partiesData = (name==='Australia' ? partiesDataAus : partiesDataMain);
+    currentPage = 1; sortColumn = null; sortAsc = true;
+
+    // reubica el mapa si no es Europa
+    const tIdx = maps.findIndex(cfg=>cfg.name===name||
+                  (cfg.filter&&cfg.filter({properties:{[cfg.prop]:name}})));
+    idx = tIdx<0? 0 : tIdx;
+    loadMap(()=>{
+      countriesLayer.eachLayer(l=>{
+        if(l.feature.properties[maps[idx].prop]===name){
+          if(selectedLayer) countriesLayer.resetStyle(selectedLayer);
+          selectedLayer = l;
+          l.setStyle({weight:4,color:'#000'});
+          if(idx>0){
+            const b = l.getBounds();
+            map.setView(b.getCenter(), maps[idx].zoom);
+          }
+          buildChips();
+          if(document.getElementById('previewZone').style.display==='block')
+            refreshPreview();
+        }
+      });
+    });
+  }
+
+  // --- Construir chips de partido ---
+  function buildChips(){
+    partyListElInner.innerHTML = '';
+    const list = Array.from(new Set(
+      partiesData.filter(r=>r.Country===currentCountry).map(r=>r.Party)
+    )).sort();
+    list.forEach(p=>{
+      const c = document.createElement('div');
+      c.textContent = p;
+      c.className = 'party-chip selected';
+      c.onclick = ()=>{
+        c.classList.toggle('selected');
+        currentPage = 1;
+        if(document.getElementById('previewZone').style.display==='block')
+          refreshPreview();
+      };
+      partyListElInner.appendChild(c);
+    });
+    btnPreview.disabled  = false;
+    btnDownload.disabled = false;
+  }
+
+  // --- Preview con paginación y orden ---
+  function refreshPreview(){
+    const tbody = document.querySelector('#previewTable tbody');
+    tbody.innerHTML = '';
+
+    // 1) filtro país+partido
+    const sel = Array.from(
+      document.querySelectorAll('.party-chip.selected')
+    ).map(c=>c.textContent);
+    let allRows = partiesData
+      .filter(r=>r.Country===currentCountry && sel.includes(r.Party));
+
+    // 2) orden sobre todo el array
+    if(sortColumn){
+      allRows.sort((a,b)=>{
+        const vA = (a[sortColumn]||'').toString();
+        const vB = (b[sortColumn]||'').toString();
+        return sortAsc
+          ? vA.localeCompare(vB)
+          : vB.localeCompare(vA);
+      });
+    }
+
+    // 3) paginación
+    const totalRows = allRows.length;
+    const totalPages = Math.ceil(totalRows/rowsPerPage);
+    if(currentPage>totalPages) currentPage = totalPages||1;
+    const start = (currentPage-1)*rowsPerPage;
+    const pageRows = allRows.slice(start, start+rowsPerPage);
+
+    // 4) render
+    pageRows.forEach(r=>{
+      const tr = document.createElement('tr');
+      ['Country','Region','Party','Party leader','Year became leader','Year ended as leader']
+        .forEach(key=>{
+          const td = document.createElement('td');
+          td.textContent = r[key]||'';
+          tr.appendChild(td);
+        });
+      tbody.appendChild(tr);
+    });
+
+    renderPaginationControls(totalPages);
+  }
+
+  function renderPaginationControls(totalPages){
+    const container = document.getElementById('paginationControls');
+    container.innerHTML = '';
+
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = '« Prev';
+    prevBtn.disabled = currentPage===1;
+    prevBtn.onclick = ()=>{
+      currentPage--; refreshPreview();
+    };
+    container.appendChild(prevBtn);
+
+    for(let p=1; p<=totalPages; p++){
+      const btn = document.createElement('button');
+      btn.textContent = p;
+      if(p===currentPage) btn.classList.add('active');
+      btn.onclick = ()=>{
+        currentPage = p; refreshPreview();
+      };
+      container.appendChild(btn);
+    }
+
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Next »';
+    nextBtn.disabled = currentPage===totalPages;
+    nextBtn.onclick = ()=>{
+      currentPage++; refreshPreview();
+    };
+    container.appendChild(nextBtn);
+  }
+
+  // --- Orden al clickar cabeceras ---
+  function setupSort(){
+    const keys = ['Country','Region','Party','Party leader','Year became leader','Year ended as leader'];
+    document.querySelectorAll('#previewTable th').forEach((th,i)=>{
+      th.style.cursor = 'pointer';
+      th.onclick = ()=>{
+        const key = keys[i];
+        if(sortColumn===key) sortAsc = !sortAsc;
+        else { sortColumn = key; sortAsc = true; }
+        currentPage = 1;
+        refreshPreview();
+      };
+    });
+  }
+
+  // 4) Botones preview / download
+  btnPreview.onclick = ()=>{
+    const zone = document.getElementById('previewZone');
+    if(zone.style.display==='none'){
+      zone.style.display='block';
+      refreshPreview();
+      setupSort();
+    } else zone.style.display='none';
+  };
+  btnDownload.onclick = ()=>{
+    const sel = Array.from(document.querySelectorAll('.party-chip.selected'))
+                     .map(c=>c.textContent);
+    const data = partiesData
+      .filter(r=>r.Country===currentCountry && sel.includes(r.Party))
+      .map(r=>({
+        Country: r.Country,
+        Region: r.Region,
+        Party: r.Party,
+        'Party leader': r['Party leader'],
+        'Year became leader': r['Year became leader'],
+        'Year ended as leader': r['Year ended as leader']
+      }));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data),'Partidos');
+    XLSX.writeFile(wb, `Partidos_${currentCountry}.xlsx`);
+  };
+});
+</script>
+
 </body>
 </html>
