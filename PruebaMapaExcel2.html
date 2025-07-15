@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Mapas de Partidos Políticos</title>
+  <title>Party Leaders</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- Fuentes y Leaflet CSS -->
@@ -504,7 +504,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data),'Partidos');
-    XLSX.writeFile(wb, `Partidos_${currentCountry}.xlsx`);
+    XLSX.writeFile(wb, `Party_Leaders_${currentCountry}.xlsx`);
   };
 });
 </script>
